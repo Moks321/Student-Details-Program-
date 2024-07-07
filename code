@@ -1,0 +1,198 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+class student:
+    def __init__ (self, id, sn, fn, age, cty):
+        self.id=id
+        self.surname=sn
+        self.firstname=fn
+        self.age=age
+        self.country=cty
+        
+def menu():
+    print("Information of students")
+    print("*******************************")
+    print("1. List of students' details and its summary")
+    print("2. Details of the oldest and youngest students ")
+    print("3. Add a new student and print the summary")
+    print("4. Search a student by id")
+    print("5. Lists all the students' details in order of age")
+    print("6. Display the students on bar chart based on their country")
+    print("7. Exit")
+    print("Enter your choice(1-7): ")
+    
+def searchbyid():
+    id=input("Enter the student ID to search:")
+    found=False
+    for x in student_list:
+        if ((x.id)==id):
+            print("=============================")
+            print ("ID: ", x.id)
+            print ("Name: ", x.firstname, " " ,x.surname)
+            print("Age: ", x.age)
+            print ("Country: ", x.country)
+            print("============================")
+            found=True
+            break
+    if (found==False):
+        print("Sorry not found.")
+
+def addnewstudent():
+    old_count=len(student_list)
+    old_total=0
+    for x in student_list:
+        old_total=old_total+int(x.age)
+    old_avg=old_total/old_count
+    print("Now you can enter new student details")
+    id=(input("Enter new id "))
+    fn=input("Enter the firstname: ")
+    sn=input("Enter the surname: ")
+    age=int(input("Enter the age: "))
+    country=input("Enter the country name: ")
+    new_data=student(id, sn, fn, age, country)
+    student_list.append(new_data)
+    new_count=len(student_list)
+    new_total=0
+    for x in student_list:
+        new_total==new_total+int(x.age)
+    new_avg=new_total/new_count
+
+    print("-----------------------------------------")
+    print("Summary")
+    print("-----------------------------------------")
+    print("Increase in count:", new_count-old_count)
+    print("Difference of average age: ", old_avg-new_avg)
+
+def sorting():
+    for j in range (0, len(student_list)):
+        for i in range (j, len(student_list)):
+            if int(student_list[i].age) < int(student_list[j-1].age):
+                temp=student_list[i]
+                student_list[i]=student_list[j-1]
+                student_list[j-1]=temp
+    print("Sorting done.....")
+    display()
+        
+def youngestandoldest():
+    oldest=student_list[0].age
+    youngest=student_list[0].age
+    for x in student_list:
+        if (x.age>oldest):
+            oldest=x.age
+        if (x.age<youngest):
+            youngest=x.age
+    print("-------------------------------------")
+    print("The youngest age is ", youngest)
+    print("The oldest age is ", oldest)
+    print("--------------------------------------")
+    for x in student_list:
+        if(x.age==youngest or x.age==oldest):
+             print("=============================")
+             print ("ID: ", x.id)
+             print ("Name: ", x.firstname, " " ,x.surname)
+             print("Age: ", x.age)
+             print ("Country: ", x.country)
+             print("============================")
+def graph():
+    CI=0
+    CB=0
+    CP=0
+    CN=0
+    CNP=0
+    for x in student_list:
+        if (x.country=="India"):
+            CI=(CI+1)
+        if (x.country=="Nepal"):
+            CNP=(CNP+1)
+        if (x.country=="Nigeria"):
+            CN=(CN+1)
+        if (x.country=="Pakistan"):
+            CP=(CP+1)
+        if (x.country=="Bangladesh"):
+            CB=(CB+1)
+    country=np.array(['India', 'Bangladesh', 'Pakistan', 'Nigeria', 'Nepal'])
+    students=np.array([ CI, CB, CP, CN, CNP])
+    ypos=np.arange(len(country))
+    plt.xticks(ypos,country)
+    plt.ylabel("Number of students")
+    plt.xlabel("Countries")
+    Colors= [ 'red', 'blue' , 'teal', 'green', 'purple']
+    plt.yticks(np.arange(1,4))
+    plt.bar(ypos, students, width=0.4, label="Students" , color=Colors)
+    plt.grid(True)
+    plt.show()
+    
+def display():
+    for x in student_list:
+        print("**********************************")
+        print ("ID: ", x.id)
+        print ("Name: ", x.firstname, " " ,x.surname)
+        print("Age: ", x.age)
+        print ("Country: ", x.country)
+        print("***********************************")
+    print("****************SUMMARY***********************")
+    count=len(student_list)
+    total_age=0
+    CN=0 #nigeria
+    CI=0 #inida
+    CNP=0 #nepal
+    CP=0 #pakistan
+    CB=0 #bangladesh
+    for x in student_list:
+        total_age=total_age+int(x.age)
+        if (x.country==" India"):
+            CI=CI+1
+        if (x.country==" Nepal"):
+            CNP=CNP+1
+        if (x.country==" Nigeria"):
+            CN=CN+1
+        if (x.country==" Pakistan"):
+            CP=CP+1
+        if (x.country==" Bangladesh"):
+            CB=CB+1
+    print("Total number of students is " , count)
+    print("Average age is " , total_age/count)
+    print("Number of students from Nepal : " , CNP)
+    print("Number of students from Nigeria : " , CN)
+    print("Number of students from India : " , CI)
+    print("Number of students from Pakistan : " , CP)
+    print("Number of students from Bangladesh : " , CB)
+        
+
+#main program starts here.
+student_list=[] # this is a list to stone objects
+file=open("data.txt","r")
+for x in file:
+    x=x.rstrip('\n')
+    id, surname, firstname, age, country= x.split(',')
+    a=student(id, surname, firstname, age, country)
+    student_list.append(a);
+file.close()
+
+
+
+while(True):
+        menu()
+    #try:
+        choice=int(input())
+        if (choice==1):
+            display()
+        if (choice==2):
+            youngestandoldest()
+        if (choice==3):
+            addnewstudent()
+        if (choice==4):
+            searchbyid()
+        if (choice==5):
+            sorting()
+        if (choice==6):
+            graph()
+        if (choice==7):
+            break
+    #except:
+        #print("Please enter numeric value")
+        #continue
+
+    #display()
+#youngestandoldest()
+searchbyid()
